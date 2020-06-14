@@ -11,7 +11,10 @@ ENV APP_MOUNT_URI ${APP_MOUNT_URI:-/dashboard/}
 ENV STATIC_URL ${STATIC_URL:-/dashboard/}
 RUN STATIC_URL=${STATIC_URL} API_URI=${API_URI} APP_MOUNT_URI=${APP_MOUNT_URI} npm run build
 
-FROM nginx:stable
+FROM node:10-alpine
 WORKDIR /app
-COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
+
+RUN npm install --global http-server
 COPY --from=builder /app/build/ /app/
+
+CMD ["http-server", "/app"]
